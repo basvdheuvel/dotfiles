@@ -1,0 +1,278 @@
+;==========================================================
+;
+;
+;   ██████╗  ██████╗ ██╗  ██╗   ██╗██████╗  █████╗ ██████╗
+;   ██╔══██╗██╔═══██╗██║  ╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+;   ██████╔╝██║   ██║██║   ╚████╔╝ ██████╔╝███████║██████╔╝
+;   ██╔═══╝ ██║   ██║██║    ╚██╔╝  ██╔══██╗██╔══██║██╔══██╗
+;   ██║     ╚██████╔╝███████╗██║   ██████╔╝██║  ██║██║  ██║
+;   ╚═╝      ╚═════╝ ╚══════╝╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+;
+;
+;   To learn more about how to configure Polybar
+;   go to https://github.com/polybar/polybar
+;
+;   The README contains a lot of information
+;
+;==========================================================
+
+[colors]
+background = #222d31
+foreground = #dfdfdf
+foreground-alt = ${env:BAR_FG_ALT}
+magicmint = #abebd2
+barbiepink = #d72483
+sinopia = #cc3f0c
+glaucous = #758ecd
+secondary = #e60053
+alert = #bd2c40
+
+[bar/base]
+bottom = true
+
+locale = nl_NL.UTF-8
+
+width = 100%
+height = 27
+offset-x = 0
+offset-y = 0
+radius = 0.0
+fixed-center = false
+
+background = ${colors.background}
+foreground = ${colors.foreground}
+
+line-size = 3
+line-color = #f00
+
+border-size = 0
+border-color = ${colors.background}
+border-top-size = 4
+
+padding-left = 0
+padding-right = 2
+
+module-margin-left = 1
+module-margin-right = 2
+
+font-0 = fixed:pixelsize=10;1
+font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
+font-2 = Font Awesome 5 Free:style=solid:pixelsize=10;0
+font-3 = Source Code Pro:size=10;0
+
+tray-padding = 2
+;tray-background = #0063ff
+
+;wm-restack = bspwm
+;wm-restack = i3
+
+;override-redirect = true
+
+;scroll-up = bspwm-desknext
+;scroll-down = bspwm-deskprev
+
+;scroll-up = i3wm-wsnext
+;scroll-down = i3wm-wsprev
+
+cursor-click = pointer
+cursor-scroll = ns-resize
+
+[bar/left]
+inherit = bar/base
+
+monitor = DP1
+
+tray-position = right
+
+modules-left = i3
+modules-center = xwindow
+modules-right = cpu memory temperature eth date
+
+[bar/right]
+inherit = bar/base
+
+monitor = DP2
+
+tray-position = none
+
+modules-left = i3
+modules-center = clementine
+modules-right = fsroot fsstorage date
+
+[module/xwindow]
+type = internal/xwindow
+label = %title:0:150:...%
+
+[module/xkeyboard]
+type = internal/xkeyboard
+blacklist-0 = num lock
+
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-prefix-underline = ${colors.secondary}
+
+label-layout = %layout%
+label-layout-underline = ${colors.secondary}
+
+label-indicator-padding = 2
+label-indicator-margin = 1
+label-indicator-background = ${colors.secondary}
+label-indicator-underline = ${colors.secondary}
+
+[module/filesystem]
+type = internal/fs
+interval = 25
+
+label-mounted = %free% (%percentage_free%%)
+label-unmounted = not mounted
+label-unmounted-foreground = ${colors.foreground-alt}
+format-mounted-prefix-foreground = ${colors.foreground-alt}
+format-unmounted-prefix-foreground = ${colors.foreground-alt}
+
+[module/fsroot]
+inherit = module/filesystem
+mount-0 = /
+format-mounted-prefix = " /: "
+format-unmounted-prefix = " /: "
+format-mounted-underline = ${colors.glaucous}
+
+[module/fsstorage]
+inherit = module/filesystem
+mount-0 = /home/bas/Storage
+format-mounted-prefix = "Storage: "
+format-unmounted-prefix = "Storage: "
+format-mounted-underline = ${colors.sinopia}
+
+[module/i3]
+type = internal/i3
+format = <label-state>
+index-sort = true
+wrapping-scroll = false
+
+; Only show workspaces on the same output as the bar
+pin-workspaces = true
+
+; focused = Active workspace on focused monitor
+label-focused = %index%
+label-focused-background = ${colors.magicmint}
+label-focused-foreground = ${colors.background}
+label-focused-underline = ${colors.barbiepink}
+label-focused-padding = 2
+
+; unfocused = Inactive workspace on any monitor
+label-unfocused = %index%
+label-unfocused-background = ${colors.background}
+label-unfocused-foreground = ${colors.foreground}
+label-unfocused-underline = ${colors.foreground}
+label-unfocused-padding = 2
+
+; visible = Active workspace on unfocused monitor
+label-visible = %index%
+label-visible-background = ${colors.background}
+label-visible-underline = ${colors.barbiepink}
+label-visible-foreground = ${colors.foreground}
+label-visible-padding = ${self.label-focused-padding}
+
+; urgent = Workspace with urgency hint set
+label-urgent = %index%
+label-urgent-background = ${colors.sinopia}
+label-urgent-padding = 2
+
+; Separator in between workspaces
+; label-separator = |
+
+[module/cpu]
+type = internal/cpu
+interval = 2
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.glaucous}
+label = %percentage:2%%
+
+[module/memory]
+type = internal/memory
+interval = 2
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.sinopia}
+label = %percentage_used%%
+
+[module/eth]
+type = internal/network
+interface = eno1
+interval = 3.0
+
+format-connected-underline = ${colors.sinopia}
+;format-connected-prefix = " "
+;format-connected-prefix-foreground = ${colors.foreground-alt}
+label-connected = ${env:BAR_ETH_LABEL}
+
+;format-disconnected =
+;format-disconnected = <label-disconnected>
+;format-disconnected-underline = ${self.format-connected-underline}
+;label-disconnected = %ifname% disconnected
+;label-disconnected-foreground = ${colors.foreground-alt}
+
+[module/date]
+type = internal/date
+interval = 5
+
+;Do 14 jan '20
+date = "%a %d %b '%y"
+date-alt = "%Y-%m-%d"
+
+time = %H:%M
+time-alt = %H:%M:%S
+
+format-prefix-font = 3
+format-prefix = " "
+format-prefix-foreground = ${colors.foreground-alt}
+format-underline = ${colors.glaucous}
+
+label = %date% %time%
+
+[module/temperature]
+type = internal/temperature
+
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon2/subsystem/hwmon2/temp1_input
+thermal-zone = 40
+warn-temperature = 90
+
+format = <ramp> <label>
+format-underline = ${colors.glaucous}
+format-warn = <ramp> <label-warn>
+format-warn-underline = ${colors.barbiepink}
+
+label = %temperature-c%
+label-warn = %temperature-c%
+label-warn-foreground = ${colors.barbiepink}
+
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-foreground = ${colors.foreground-alt}
+
+[module/clementine]
+type = custom/script
+
+tail = true
+format-prefix-font = 3
+format-prefix-foreground = ${colors.foreground-alt}
+format-prefix = " "
+label-font = 4
+format = <label>
+exec = ~/.config/polybar/clementine.sh
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+;pseudo-transparency = false
+
+[global/wm]
+margin-top = 5
+margin-bottom = 5
+
+; vim:ft=dosini
