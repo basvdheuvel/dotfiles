@@ -293,6 +293,9 @@ bindsym XF86AudioPlay exec clementine -t
 bindsym XF86AudioNext exec clementine -f
 bindsym XF86AudioPrev exec clementine -r
 
+# Keyboard options
+exec --no-startup-id xplugd
+
 # Color palette used for the terminal ( ~/.Xresources file )
 # Colors are gathered based on the documentation:
 # https://i3wm.org/docs/userguide.html#xresources

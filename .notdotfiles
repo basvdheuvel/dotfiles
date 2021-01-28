@@ -17,8 +17,6 @@
 !.config/nvim/spell
 !.config/nvim/spell/*.add
 
-!.config/okularpartrc
-
 !.config/polybar
 !.config/polybar/config
 !.config/polybar/launch.sh
@@ -26,6 +24,8 @@
 
 !.config/rofi
 !.config/rofi/config.rasi
+
+!.config/xplugrc
 
 !.gitconfig
 
