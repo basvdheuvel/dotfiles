@@ -77,12 +77,9 @@ Plug 'junegunn/fzf.vim'
 Plug 'dag/vim-fish'
 " Jade syntax highlighting
 " Plug 'statianzo/vim-jade'
-" Python indentation
-" Plug 'vim-scripts/indentpython.vim'
-" Python autocomplete
-" Plug 'zchee/deoplete-jedi'
-" Python syntax checking
-" Plug 'nvie/vim-flake8'
+Plug 'vim-scripts/indentpython.vim' " Python indentation
+Plug 'zchee/deoplete-jedi' " Python autocomplete
+Plug 'nvie/vim-flake8' " Python syntax checking
 " JS syntax and indentation
 " Plug 'pangloss/vim-javascript'
 " JS autocomplete
@@ -146,13 +143,26 @@ inoremap # X<BS>#
 " Ruler rules
 set ruler
 
-" Tab completion
-"TODO
-" set wildmenu
-" set wildmode=list:longest,full
+" Auto-completion
+let g:deoplete#enable_at_startup = 1
 call deoplete#custom#var('omni', 'input_patterns', {
         \ 'tex': g:vimtex#re#deoplete
         \})
+set completeopt=menu,noinsert
+
+" Tab for autocompletion
+function! SuperTab()
+    if (strpart(getline('.'),col('.')-2,1)=~'^\W\?$')
+        return "\<Tab>"
+    else
+        return "\<C-n>"
+    endif
+endfunction
+inoremap <Tab> <C-R>=SuperTab()<CR>
+
+" Better file auto-completion
+set wildmode=list:longest,full
+set wildmenu
 
 " Enable mouse
 set mouse=a
@@ -250,6 +260,12 @@ vnoremap <silent> k gk
 vnoremap <silent> $ g$
 vnoremap <silent> ^ g^
 
+" navigation in insert mode
+inoremap <C-h> <Left>
+inoremap <C-j> <Down>
+inoremap <C-k> <Up>
+inoremap <C-l> <Right>
+
 " Swap ; and : since you use the last one way more often, so why make it
 " harder
 nnoremap ; :
@@ -286,16 +302,6 @@ noremap <silent><leader>' :nohls<CR>
 map <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle<CR>gv
 
-" Tab for autocompletion
-function! SuperTab()
-    if (strpart(getline('.'),col('.')-2,1)=~'^\W\?$')
-        return "\<Tab>"
-    else
-        return "\<C-n>"
-    endif
-endfunction
-inoremap <Tab> <C-R>=SuperTab()<CR>
-
 " Realtime substitute preview.
 if exists('&incommand')
     set incommand=nosplit
@@ -304,9 +310,6 @@ endif
 " Local .vimrc
 set exrc
 set secure
-
-" Ctrl-Backspace as everywhere
-inoremap <C-h> <C-w>
 
 " Open FZF
 command FFZF call fzf#run(fzf#wrap('filtered-fzf', {'source': 'ag --hidden --nocolor -g ""'}, <bang>0))
@@ -341,7 +344,3 @@ let g:vimtex_view_general_options = '--unique file:@pdf\#src:@line@tex'
 let g:vimtex_view_general_options_latexmk = '--unique'
 
 let g:vimtex_syntax_nospell_commands=['\cite', '\secref', '\begin', '\end']
-
-" Better file auto-completion
-set wildmode=list:longest,full
-set wildmenu
