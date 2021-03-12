@@ -148,7 +148,7 @@ let g:deoplete#enable_at_startup = 1
 call deoplete#custom#var('omni', 'input_patterns', {
         \ 'tex': g:vimtex#re#deoplete
         \})
-set completeopt=menu,noinsert
+set completeopt=menu,noinsert,noselect
 
 " Tab for autocompletion
 function! SuperTab()
@@ -243,10 +243,6 @@ vnoremap > >gv
 "Open last alternate buffer
 noremap <leader><leader> <C-^>
 
-"Clipboard copy pasting
-vnoremap <F6> :!xclip -f -sel clip<CR>
-noremap <F7> mz:-1r !xclip -o -sel clip<CR>`z
-
 "Make Y work like D and C
 map Y y$
 
@@ -285,6 +281,10 @@ noremap <SID>herrderr <Plug>IMAP_JumpForward
 " Opening newlines from insert mode
 imap <M-o> <esc>o
 imap <C-o> <esc>O
+
+" Better indentation shortcuts that preserve cursor position
+nmap <C-t> a<C-t><esc>
+nmap <C-d> a<C-d><esc>
 
 " Workaround for https://github.com/neovim/neovim/issues/2048
 if has('nvim')
