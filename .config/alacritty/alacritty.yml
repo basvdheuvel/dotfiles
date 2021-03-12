@@ -26,7 +26,7 @@ window:
 colors:
   # Default colors
   primary:
-    background: '#0A0E14'
+    background: '#0F1419' # changed to match ayu-vim
     foreground: '#B3B1AD'
 
   # Normal colors

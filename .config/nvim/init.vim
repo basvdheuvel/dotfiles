@@ -59,7 +59,6 @@ inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
 " Plugins!
 call plug#begin()
 
-" Color scheme
 " Plug 'andreypopp/vim-colors-plain'
 " Plug 'aradunovic/perun.vim'
 " Plug 'dracula/vim', { 'as': 'dracula' }
