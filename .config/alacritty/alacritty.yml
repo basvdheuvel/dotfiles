@@ -17,6 +17,11 @@ font:
 
   size: 11
 
+window:
+  padding:
+    x: 20
+    y: 10
+
 # Colors (Ayu Dark)
 colors:
   # Default colors
