@@ -279,6 +279,7 @@ exec --no-startup-id nm-applet
 exec --no-startup-id xfce4-power-manager
 exec --no-startup-id pamac-tray
 exec --no-startup-id clipit
+exec --no-startup-id caffeine
 # exec --no-startup-id blueman-applet
 # exec_always --no-startup-id sbxkb
 # exec --no-startup-id start_conky_maia
@@ -287,15 +288,15 @@ exec --no-startup-id xautolock -time 10 -locker blurlock
 exec_always --no-startup-id ff-theme-util
 exec_always --no-startup-id fix_xcursor
 exec --no-startup-id blueman-applet
-exec --no-startup-id dropbox
+exec --no-startup-id dbus-launch dropbox
 
 # Music controls
-bindsym XF86AudioPlay exec clementine -t
-bindsym XF86AudioNext exec clementine -f
-bindsym XF86AudioPrev exec clementine -r
+bindsym XF86AudioPlay exec strawberry -t
+bindsym XF86AudioNext exec strawberry -f
+bindsym XF86AudioPrev exec strawberry -r
 
 # Keyboard options
-exec --no-startup-id ~/.config/xplugrc keyboard 1 connected "Keychron K2 Keyboard"
+exec --no-startup-id ~/.config/xplugrc keyboard 1 connected "Keychron K2"
 exec --no-startup-id xplugd
 
 # Color palette used for the terminal ( ~/.Xresources file )

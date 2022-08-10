@@ -55,13 +55,14 @@ padding-right = 2
 module-margin-left = 1
 module-margin-right = 2
 
-font-0 = fixed:pixelsize=10;1
+font-0 = IBMPlexSans:style=Text:size=10;0
 font-1 = unifont:fontformat=truetype:size=8:antialias=false;0
-font-2 = Font Awesome 5 Free:style=solid:pixelsize=10;0
-font-3 = Source Code Pro:size=10;0
+font-2 = Font Awesome 6 Free:style=solid:pixelsize=10;0
+font-3 = IBMPlexMono:style=Text Italic:size=10;0
 
-tray-padding = 2
+tray-padding = 1
 ;tray-background = #0063ff
+;tray-reparent = true
 
 ;wm-restack = bspwm
 ;wm-restack = i3
@@ -80,7 +81,7 @@ cursor-scroll = ns-resize
 [bar/left]
 inherit = bar/base
 
-monitor = DP1
+monitor = DP-1
 
 tray-position = right
 
@@ -91,7 +92,7 @@ modules-right = cpu memory temperature eth date
 [bar/right]
 inherit = bar/base
 
-monitor = DP2
+monitor = DP-2
 
 tray-position = none
 
@@ -234,7 +235,7 @@ label = %date% %time%
 [module/temperature]
 type = internal/temperature
 
-hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon2/subsystem/hwmon2/temp1_input
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon3/temp1_input
 thermal-zone = 40
 warn-temperature = 90
 

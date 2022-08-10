@@ -1,5 +1,10 @@
 #!/usr/bin/fish
 
-if test "$argv[1],$argv[3],$argv[4]" = "keyboard,connected,Keychron K2 Keyboard"
+if test "$argv[1],$argv[3],$argv[4]" = "keyboard,connected,Keychron K2"
     setxkbmap -layout us -variant altgr-intl -option altwin:swap_lalt_lwin -option caps:backspace
+    xmodmap -e "clear Lock"
+end
+
+if test "$argv[1],$argv[3],$argv[4]" = "pointer,connected,HUION Huion Tablet Pen (0)"
+    xinput --map-to-output "HUION Huion Tablet Pen (0)" DP-1
 end

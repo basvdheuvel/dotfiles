@@ -97,6 +97,13 @@ Plug 'plasticboy/vim-markdown'
 Plug 'junegunn/limelight.vim'
 " Goyo - distraction free writing
 Plug 'junegunn/goyo.vim'
+Plug 'tpope/vim-surround'
+" Git diffs.
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'sindrets/diffview.nvim'
+" Git integration.
+Plug 'tpope/vim-fugitive'
 
 call plug#end()
 
@@ -147,7 +154,6 @@ let g:deoplete#enable_at_startup = 1
 call deoplete#custom#var('omni', 'input_patterns', {
         \ 'tex': g:vimtex#re#deoplete
         \})
-set completeopt=menu,noinsert,noselect
 
 " Tab for autocompletion
 function! SuperTab()
@@ -257,8 +263,8 @@ vnoremap <silent> ^ g^
 
 " navigation in insert mode
 inoremap <C-h> <Left>
-inoremap <C-j> <Down>
-inoremap <C-k> <Up>
+inoremap <C-j> <esc>gja
+inoremap <C-k> <esc>gka
 inoremap <C-l> <Right>
 
 " Swap ; and : since you use the last one way more often, so why make it
@@ -326,12 +332,18 @@ endfunction
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave Limelight!
 
+" Fix LaTeX speed
+au FileType tex
+    \ set nocursorline |
+    \ let g:loaded_matchparen=0 |
+
 " VimTeX settings
 let maplocalleader="\\"
 
 let g:tex_conceal=""
 let conceallevel=0
 let g:tex_flavor = 'latex'
+let g:vimtex_indent_on_ampersands=0
 
 let g:vimtex_compiler_latexmk = {
     \ 'callback' : 0,
@@ -340,6 +352,3 @@ let g:vimtex_compiler_latexmk = {
 let g:vimtex_compiler_progname="nvr"
 let g:vimtex_view_general_viewer = 'okular'
 let g:vimtex_view_general_options = '--unique file:@pdf\#src:@line@tex'
-let g:vimtex_view_general_options_latexmk = '--unique'
-
-let g:vimtex_syntax_nospell_commands=['\cite', '\secref', '\begin', '\end']
