@@ -59,7 +59,6 @@ inoremap <special> <expr> <Esc>[200~ XTermPasteBegin()
 " Plugins!
 call plug#begin()
 
-" Color scheme
 " Plug 'andreypopp/vim-colors-plain'
 " Plug 'aradunovic/perun.vim'
 " Plug 'dracula/vim', { 'as': 'dracula' }
@@ -77,12 +76,9 @@ Plug 'junegunn/fzf.vim'
 Plug 'dag/vim-fish'
 " Jade syntax highlighting
 " Plug 'statianzo/vim-jade'
-" Python indentation
-" Plug 'vim-scripts/indentpython.vim'
-" Python autocomplete
-" Plug 'zchee/deoplete-jedi'
-" Python syntax checking
-" Plug 'nvie/vim-flake8'
+Plug 'vim-scripts/indentpython.vim' " Python indentation
+Plug 'zchee/deoplete-jedi' " Python autocomplete
+Plug 'nvie/vim-flake8' " Python syntax checking
 " JS syntax and indentation
 " Plug 'pangloss/vim-javascript'
 " JS autocomplete
@@ -101,6 +97,13 @@ Plug 'plasticboy/vim-markdown'
 Plug 'junegunn/limelight.vim'
 " Goyo - distraction free writing
 Plug 'junegunn/goyo.vim'
+Plug 'tpope/vim-surround'
+" Git diffs.
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'sindrets/diffview.nvim'
+" Git integration.
+Plug 'tpope/vim-fugitive'
 
 call plug#end()
 
@@ -146,13 +149,25 @@ inoremap # X<BS>#
 " Ruler rules
 set ruler
 
-" Tab completion
-"TODO
-" set wildmenu
-" set wildmode=list:longest,full
+" Auto-completion
+let g:deoplete#enable_at_startup = 1
 call deoplete#custom#var('omni', 'input_patterns', {
         \ 'tex': g:vimtex#re#deoplete
         \})
+
+" Tab for autocompletion
+function! SuperTab()
+    if (strpart(getline('.'),col('.')-2,1)=~'^\W\?$')
+        return "\<Tab>"
+    else
+        return "\<C-n>"
+    endif
+endfunction
+inoremap <Tab> <C-R>=SuperTab()<CR>
+
+" Better file auto-completion
+set wildmode=list:longest,full
+set wildmenu
 
 " Enable mouse
 set mouse=a
@@ -233,10 +248,6 @@ vnoremap > >gv
 "Open last alternate buffer
 noremap <leader><leader> <C-^>
 
-"Clipboard copy pasting
-vnoremap <F6> :!xclip -f -sel clip<CR>
-noremap <F7> mz:-1r !xclip -o -sel clip<CR>`z
-
 "Make Y work like D and C
 map Y y$
 
@@ -249,6 +260,12 @@ vnoremap <silent> j gj
 vnoremap <silent> k gk
 vnoremap <silent> $ g$
 vnoremap <silent> ^ g^
+
+" navigation in insert mode
+inoremap <C-h> <Left>
+inoremap <C-j> <esc>gja
+inoremap <C-k> <esc>gka
+inoremap <C-l> <Right>
 
 " Swap ; and : since you use the last one way more often, so why make it
 " harder
@@ -270,6 +287,10 @@ noremap <SID>herrderr <Plug>IMAP_JumpForward
 imap <M-o> <esc>o
 imap <C-o> <esc>O
 
+" Better indentation shortcuts that preserve cursor position
+nmap <C-t> a<C-t><esc>
+nmap <C-d> a<C-d><esc>
+
 " Workaround for https://github.com/neovim/neovim/issues/2048
 if has('nvim')
     nmap <BS> <C-W>h
@@ -286,16 +307,6 @@ noremap <silent><leader>' :nohls<CR>
 map <C-_> <plug>NERDCommenterToggle
 vmap <C-_> <plug>NERDCommenterToggle<CR>gv
 
-" Tab for autocompletion
-function! SuperTab()
-    if (strpart(getline('.'),col('.')-2,1)=~'^\W\?$')
-        return "\<Tab>"
-    else
-        return "\<C-n>"
-    endif
-endfunction
-inoremap <Tab> <C-R>=SuperTab()<CR>
-
 " Realtime substitute preview.
 if exists('&incommand')
     set incommand=nosplit
@@ -304,9 +315,6 @@ endif
 " Local .vimrc
 set exrc
 set secure
-
-" Ctrl-Backspace as everywhere
-inoremap <C-h> <C-w>
 
 " Open FZF
 command FFZF call fzf#run(fzf#wrap('filtered-fzf', {'source': 'ag --hidden --nocolor -g ""'}, <bang>0))
@@ -324,12 +332,18 @@ endfunction
 autocmd! User GoyoEnter nested call <SID>goyo_enter()
 autocmd! User GoyoLeave Limelight!
 
+" Fix LaTeX speed
+au FileType tex
+    \ set nocursorline |
+    \ let g:loaded_matchparen=0 |
+
 " VimTeX settings
 let maplocalleader="\\"
 
 let g:tex_conceal=""
 let conceallevel=0
 let g:tex_flavor = 'latex'
+let g:vimtex_indent_on_ampersands=0
 
 let g:vimtex_compiler_latexmk = {
     \ 'callback' : 0,
@@ -338,10 +352,3 @@ let g:vimtex_compiler_latexmk = {
 let g:vimtex_compiler_progname="nvr"
 let g:vimtex_view_general_viewer = 'okular'
 let g:vimtex_view_general_options = '--unique file:@pdf\#src:@line@tex'
-let g:vimtex_view_general_options_latexmk = '--unique'
-
-let g:vimtex_syntax_nospell_commands=['\cite', '\secref', '\begin', '\end']
-
-" Better file auto-completion
-set wildmode=list:longest,full
-set wildmenu

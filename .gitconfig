@@ -3,3 +3,11 @@
 [user]
 	email = vdheuvel.bas@gmail.com
 	name = Bas van den Heuvel
+[filter "lfs"]
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+	process = git-lfs filter-process
+	required = true
+[credential "https://git.overleaf.com"]
+	username = vdheuvel.bas@gmail.com
+	helper = cache

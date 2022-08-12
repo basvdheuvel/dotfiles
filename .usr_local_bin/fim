@@ -1,0 +1,8 @@
+#!/usr/bin/env fish
+if command -sq nvim > /dev/null
+    nvim $argv
+else if command -sq vim > /dev/null
+    command vim $argv
+else
+    vi $argv
+end
