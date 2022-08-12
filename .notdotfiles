@@ -48,6 +48,8 @@
 !.i3
 !.i3/config
 
+!.profile
+
 !.usr_local_bin
 !.usr_local_bin/CollaB3
 !.usr_local_bin/fim
