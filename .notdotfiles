@@ -31,9 +31,11 @@
 !.config/omf/*
 
 !.config/polybar
-!.config/polybar/config
+!.config/polybar/config.ini
 !.config/polybar/launch.sh
 !.config/polybar/clementine.sh
+
+!.profile
 
 !.config/rofi
 !.config/rofi/config.rasi

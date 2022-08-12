@@ -12,4 +12,4 @@ export BAR_ETH_LABEL="%{F$BAR_FG_ALT}%{F-} %upspeed% %{F$BAR_FG_ALT}%{F-} 
 
 # Launch Polybar, using default config location ~/.config/polybar/config
 polybar left &
-polybar right &
+# polybar right &

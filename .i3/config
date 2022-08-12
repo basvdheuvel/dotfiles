@@ -43,13 +43,13 @@ bindsym $mod+Shift+r exec --no-startup-id morc_menu
 ## sound-section ##
 ###################
 
-#exec --no-startup-id volumeicon
-#bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
+exec --no-startup-id volumeicon
+bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
 #exec --no-startup-id pulseaudio
 #exec --no-startup-id pa-applet
-exec --no-startup-id volctl
-bindsym $mod+Ctrl+m exec pavucontrol
-exec pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo
+#exec --no-startup-id volctl
+#bindsym $mod+Ctrl+m exec pavucontrol
+#exec pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo
 
 ################################################################################################
 
@@ -58,13 +58,6 @@ exec pactl set-default-sink alsa_output.pci-0000_00_1f.3.hdmi-stereo
 # bindsym XF86MonBrightnessDown exec "xbacklight -dec 10; notify-send 'brightness down'"
 
 # Start Applications
-bindsym $mod+F2 exec palemoon
-bindsym $mod+F3 exec pcmanfm
-# bindsym $mod+F3 exec ranger
-bindsym $mod+Shift+F3 exec pcmanfm_pkexec
-bindsym $mod+t exec --no-startup-id pkill picom
-bindsym $mod+Ctrl+t exec --no-startup-id picom -b
-bindsym $mod+Shift+d --release exec "killall dunst; exec notify-send 'restart dunst'"
 bindsym Print exec --no-startup-id i3-scrot
 bindsym $mod+Print --release exec --no-startup-id i3-scrot -w
 bindsym $mod+Shift+Print --release exec --no-startup-id i3-scrot -s
@@ -269,17 +262,17 @@ bindsym $mod+Ctrl+l resize grow width 5 px or 5 ppt
 bindsym $mod+Escape exec --no-startup-id blurlock
 
 # Set screen layout
-exec --no-startup-id ~/.screenlayout/hor_ver.sh
+#exec --no-startup-id ~/.screenlayout/hor_ver.sh
 
 # Autostart applications
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec --no-startup-id nitrogen --restore; sleep 1; picom -b
 #exec --no-startup-id manjaro-hello
 exec --no-startup-id nm-applet
-exec --no-startup-id xfce4-power-manager
+exec --no-startup-id mate-power-manager
 exec --no-startup-id pamac-tray
 exec --no-startup-id clipit
-exec --no-startup-id caffeine
+#exec --no-startup-id caffeine
 # exec --no-startup-id blueman-applet
 # exec_always --no-startup-id sbxkb
 # exec --no-startup-id start_conky_maia
