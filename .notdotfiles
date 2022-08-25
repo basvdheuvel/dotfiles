@@ -16,6 +16,8 @@
 
 !.config/i3-scrot.conf
 
+!.config/mimeapps.list
+
 !.config/MusicBrainz
 !.config/MusicBrainz/Picard*.ini
 !.config/MusicBrainz/Picard
