@@ -8,3 +8,11 @@ end
 if test "$argv[1],$argv[3],$argv[4]" = "pointer,connected,HUION Huion Tablet Pen (0)"
     xinput --map-to-output "HUION Huion Tablet Pen (0)" DP-1
 end
+
+if test "$argv[1]" = "display"
+    if test "$argv[3]" = "connected"
+        /home/bas/.screenlayout/hdmi_mirror.sh
+    else if test "$argv[3]" = "disconnected"
+        xrandr --auto
+    end
+end
