@@ -65,6 +65,9 @@ vim.keymap.set({'n','v'}, '<leader>p', 'p`[v`]')
 vim.keymap.set({'n','v'}, '<leader>P', 'P`[v`]')
 vim.keymap.set('v', '<leader>y', '"+y')
 
+vim.keymap.set('n', 'j', 'gj')
+vim.keymap.set('n', 'k', 'gk')
+
 vim.keymap.set('i', '<C-h>', '<Left>')
 vim.keymap.set('i', '<C-j>', '<Down>')
 vim.keymap.set('i', '<C-k>', '<Up>')
@@ -79,6 +82,23 @@ vim.keymap.set('v', '>', '>gv')
 vim.keymap.set('v', '<', '<gv')
 vim.keymap.set('v', '<C-t>', '>gv')
 vim.keymap.set('v', '<C-d>', '<gv')
+
+vim.api.nvim_create_autocmd({"FileType"}, {
+  pattern = {"gitcommit", "gitrebase", "gitconfig", "gitsendmail"},
+  command = "set bufhidden=delete"
+})
+
+vim.api.nvim_create_autocmd({"FileType"}, {
+  pattern = {"qf"},
+  callback = function()
+    vim.keymap.set('n', '<leader>h', '<C-w><Enter><C-w>L', {buffer = true})
+    vim.keymap.set('n', '<leader>v', '<C-w><Enter>', {buffer = true})
+  end
+})
+
+if vim.fn.has("nvim") then
+  vim.env.GIT_EDITOR = "nvr -cc split --remote-wait"
+end
 
 vim.api.nvim_create_autocmd('BufRead', {
   callback = function(opts)
@@ -106,10 +126,20 @@ require("lazy").setup({
   spec = {
 
     {
+      "xiyaowong/transparent.nvim",
+      lazy = false,
+      priority = 1001,
+      config = function()
+        require("transparent").toggle(true)
+      end
+    },
+
+    {
       "folke/tokyonight.nvim",
       lazy = false,
       priority = 1000,
       config = function()
+        require("tokyonight").setup{ transparent = vim.g.transparent_enabled }
         vim.o.background = "dark"
         vim.cmd.colorscheme "tokyonight-night"
       end
@@ -132,11 +162,34 @@ require("lazy").setup({
       branch = "0.1.x",
       dependencies = {"nvim-lua/plenary.nvim"},
       config = function()
+        my_mappings = {
+          i = {
+            ["<C-h>"] = "select_vertical",
+            ["<C-v>"] = "select_horizontal"
+          },
+          n = {
+            ["<C-h>"] = "select_vertical",
+            ["<C-v>"] = "select_horizontal"
+          }
+        }
+        require('telescope').setup{
+          pickers = {
+            find_files = {
+              mappings = my_mappings
+            },
+            live_grep = {
+              mappings = my_mappings
+            },
+            current_buffer_fuzzy_find = {
+              mappings = my_mappings
+            }
+          }
+        }
         local builtin = require('telescope.builtin')
         vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
         vim.keymap.set('n', '<leader>fh', function()
           builtin.find_files({ hidden = true })
-        end, { desc = 'Telescope find files (hidden included' })
+        end, { desc = 'Telescope find files (hidden included)' })
         vim.keymap.set('n', '<leader>f/', builtin.current_buffer_fuzzy_find, { desc = 'Telescope fuzzy search current buffer' })
         vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
         vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
@@ -171,8 +224,9 @@ require("lazy").setup({
       config = function()
 
         vim.lsp.enable('solargraph')
-        vim.lsp.enable('rubocop')
+        -- vim.lsp.enable('rubocop')
         vim.lsp.enable('marksman')
+        vim.lsp.enable('cssls')
 
         vim.keymap.set('n', 'K', function()
           vim.lsp.buf.hover { border = 'single' }
@@ -198,14 +252,17 @@ require("lazy").setup({
             ["<C-n>"] = cmp.mapping.select_next_item({ behavior = cmp.SelectBehavior.Insert }),
             ["<C-b>"] = cmp.mapping.select_prev_item({ behavior = cmp.SelectBehavior.Insert }),
             ['<C-Space>'] = cmp.mapping.confirm({ select = true }),
-            ['<C-e>'] = cmp.mapping.abort(),
+            ['<C-e'] = cmp.mapping.confirm({ select = true }),
+            ['<C-q>'] = cmp.mapping.abort(),
           }),
           experimental = { ghost_text = true },
-          sources = cmp.config.sources({
-            { name = 'nvim_lsp' },
-          }, {
-            { name = 'buffer' },
-          })
+          sources = cmp.config.sources(
+            {
+              { name = 'nvim_lsp' },
+            }, {
+              { name = 'buffer' },
+            }
+          )
         })
 
         -- Use buffer source for `/` and `?` (if you enabled `native_menu`, this won't work anymore).
@@ -232,14 +289,8 @@ require("lazy").setup({
         -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
         vim.lsp.config('solargraph', { capabilities = capabilities })
         vim.lsp.config('rubocop', { capabilities = capabilities })
+        vim.lsp.config('cssls', { capabilities = capabilities })
       end
-    },
-
-    {
-      "andrewferrier/wrapping.nvim",
-      config = function()
-        require("wrapping").setup()
-      end,
     },
 
     {
@@ -255,6 +306,77 @@ require("lazy").setup({
       'Aasim-A/scrollEOF.nvim',
       event = { 'CursorMoved', 'WinScrolled' },
       opts = {},
+    },
+
+    {
+      'lewis6991/gitsigns.nvim',
+      tag = 'release',
+      config = function()
+        require('gitsigns').setup{
+          on_attach = function(bufnr)
+            local gitsigns = require('gitsigns')
+
+            local function map(mode, l, r, opts)
+              opts = opts or {}
+              opts.buffer = bufnr
+              vim.keymap.set(mode, l, r, opts)
+            end
+
+            -- Navigation
+            map('n', ']c', function()
+              if vim.wo.diff then
+                vim.cmd.normal({']c', bang = true})
+              else
+                gitsigns.nav_hunk('next')
+              end
+            end)
+
+            map('n', '[c', function()
+              if vim.wo.diff then
+                vim.cmd.normal({'[c', bang = true})
+              else
+                gitsigns.nav_hunk('prev')
+              end
+            end)
+
+            -- Actions
+            map('n', '<leader>ss', gitsigns.stage_hunk)
+            map('n', '<leader>sS', gitsigns.stage_buffer)
+            map('v', '<leader>ss', function()
+              gitsigns.stage_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+            end)
+
+            map('n', '<leader>sr', gitsigns.reset_hunk)
+            map('n', '<leader>sR', gitsigns.reset_buffer)
+            map('v', '<leader>sr', function()
+              gitsigns.reset_hunk({ vim.fn.line('.'), vim.fn.line('v') })
+            end)
+
+            map('n', '<leader>sp', gitsigns.preview_hunk)
+            map('n', '<leader>si', gitsigns.preview_hunk_inline)
+
+            map('n', '<leader>sb', function()
+              gitsigns.blame_line({ full = true })
+            end)
+
+            map('n', '<leader>sd', gitsigns.diffthis)
+            map('n', '<leader>sD', function()
+              gitsigns.diffthis('~')
+            end)
+
+            map('n', '<leader>sQ', function() gitsigns.setqflist('all') end)
+            map('n', '<leader>sq', gitsigns.setqflist)
+
+            -- Toggles
+            map('n', '<leader>stb', gitsigns.toggle_current_line_blame)
+            map('n', '<leader>std', gitsigns.toggle_deleted)
+            map('n', '<leader>stw', gitsigns.toggle_word_diff)
+
+            -- Text object
+            map({'o', 'x'}, 'sih', gitsigns.select_hunk)
+          end
+        }
+      end
     },
 
   },
