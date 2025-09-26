@@ -1,0 +1,23 @@
+[core]
+	editor = nvim
+[pull]
+  rebase = true
+[push]
+  autoSetupRemote = true
+[diff]
+  noprefix = true # removes a/ and b/ prefixes
+  tool = nvimdiff
+  guitool = nvimdiff
+[merge]
+  tool = nvimdiff
+  conflictstyle = diff3
+[mergetool]
+  prompt = true
+[difftool]
+  prompt = false
+[mergetool "nvimdiff"]
+  layout = "LOCAL,BASE,REMOTE / MERGED"
+[mergetool "nvimmerge"]
+  cmd = nvim -d
+[alias]
+	co = checkout
