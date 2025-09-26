@@ -1,8 +1,6 @@
 set -x VISUAL nvim
 set -x EDITOR $VISUAL
 
-function dotfiles
-    git --git-dir=$HOME/.dotfiles/ --work-tree=$HOME $argv
-end
-
 alias tlmgr='/usr/share/texmf-dist/scripts/texlive/tlmgr.pl --usermode'
+
+alias urldecode='python -c "import sys, urllib.parse as ul; [sys.stdout.write(ul.unquote_plus(l)) for l in sys.stdin]"'
