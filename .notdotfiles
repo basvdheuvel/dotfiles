@@ -59,4 +59,6 @@
 !.usr_local_bin/setup_screens
 !.usr_local_bin/show_power_menu
 
+!.sharedgitconfig
+
 !.notdotfiles
