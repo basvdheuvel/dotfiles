@@ -96,6 +96,13 @@ vim.api.nvim_create_autocmd({"FileType"}, {
   end
 })
 
+vim.api.nvim_create_autocmd({"FileType"}, {
+  pattern = {"ruby"},
+  callback = function()
+    vim.opt_local.textwidth = 100
+  end
+})
+
 if vim.fn.has("nvim") then
   vim.env.GIT_EDITOR = "nvr -cc split --remote-wait"
 end
