@@ -65,8 +65,8 @@ vim.keymap.set({'n','v'}, '<leader>p', 'p`[v`]')
 vim.keymap.set({'n','v'}, '<leader>P', 'P`[v`]')
 vim.keymap.set('v', '<leader>y', '"+y')
 
-vim.keymap.set('n', 'j', 'gj')
-vim.keymap.set('n', 'k', 'gk')
+vim.keymap.set({'n','v'}, 'j', 'gj')
+vim.keymap.set({'n','v'}, 'k', 'gk')
 
 vim.keymap.set('i', '<C-h>', '<Left>')
 vim.keymap.set('i', '<C-j>', '<Down>')
