@@ -34,6 +34,8 @@ vim.o.splitbelow = true
 vim.o.splitright = true
 vim.o.breakindent = true
 vim.o.scrolloff = 5
+vim.opt.ignorecase = true
+vim.opt.smartcase = true
 
 vim.cmd('syntax enable')
 vim.cmd('filetype plugin indent on')
@@ -97,10 +99,15 @@ vim.api.nvim_create_autocmd({"FileType"}, {
 })
 
 vim.api.nvim_create_autocmd({"FileType"}, {
-  pattern = {"ruby"},
+  pattern = {"ruby", "python"},
   callback = function()
     vim.opt_local.textwidth = 100
   end
+})
+
+vim.api.nvim_create_autocmd({"BufWritePre"}, {
+  pattern = {"*"},
+  command = [[%s/\s\+$//e]],
 })
 
 if vim.fn.has("nvim") then
