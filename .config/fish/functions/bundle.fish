@@ -1,5 +1,5 @@
 function be
-  bundle exec
+  bundle exec $argv
 end
 
 function bu
@@ -12,4 +12,8 @@ end
 
 function bubi
   bu; and bi
+end
+
+function ber
+  be rspec $argv
 end

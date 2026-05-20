@@ -21,6 +21,9 @@ vim.opt.rtp:prepend(lazypath)
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- To prevent 4-space indentation
+vim.g.markdown_recommended_style = 0
+
 vim.o.number = true -- line numbers
 vim.o.relativenumber = false
 vim.o.tabstop = 2 -- number of spaces in a tab
@@ -36,6 +39,8 @@ vim.o.breakindent = true
 vim.o.scrolloff = 5
 vim.opt.ignorecase = true
 vim.opt.smartcase = true
+vim.o.sessionoptions = "blank,buffers,curdir,folds,help,tabpages,winsize,winpos,terminal,localoptions" -- recommended for AutoSession
+vim.o.foldenable = false
 
 vim.cmd('syntax enable')
 vim.cmd('filetype plugin indent on')
@@ -85,6 +90,11 @@ vim.keymap.set('v', '<', '<gv')
 vim.keymap.set('v', '<C-t>', '>gv')
 vim.keymap.set('v', '<C-d>', '<gv')
 
+
+vim.keymap.set('n', '<leader>/', 'gcc', { remap = true })
+vim.keymap.set('v', '<leader>/', 'gc', { remap = true })
+vim.keymap.set('n', '<leader>*', 'gbc', { remap = true })
+vim.keymap.set('v', '<leader>*', 'gb', { remap = true })
 vim.api.nvim_create_autocmd({"FileType"}, {
   pattern = {"gitcommit", "gitrebase", "gitconfig", "gitsendmail"},
   command = "set bufhidden=delete"
@@ -102,6 +112,9 @@ vim.api.nvim_create_autocmd({"FileType"}, {
   pattern = {"ruby", "python"},
   callback = function()
     vim.opt_local.textwidth = 100
+    vim.o.tabstop = 2 -- number of spaces in a tab
+    vim.o.shiftwidth = 2 -- number of spaces in indentation
+    vim.o.expandtab = true -- convert tabs to spaces
   end
 })
 
@@ -144,7 +157,11 @@ require("lazy").setup({
       lazy = false,
       priority = 1001,
       config = function()
-        require("transparent").toggle(true)
+        local transparent = require("transparent")
+        transparent.setup({
+          exclude_groups = { "Todo" },  -- Don't make Todo transparent
+        })
+        transparent.toggle(true)
       end
     },
 
@@ -156,6 +173,13 @@ require("lazy").setup({
         require("tokyonight").setup{ transparent = vim.g.transparent_enabled }
         vim.o.background = "dark"
         vim.cmd.colorscheme "tokyonight-night"
+
+        -- Custom highlight for TODO with background to make it stand out
+        vim.api.nvim_set_hl(0, "Todo", {
+          fg = "#1a1b26",  -- Dark foreground (tokyonight background color)
+          bg = "#7aa2f7",  -- Bright blue background (tokyonight blue)
+          bold = true,
+        })
       end
     },
 
@@ -165,6 +189,9 @@ require("lazy").setup({
       lazy = true,
       event = "VeryLazy",
       priority = 999,
+      dependencies = {
+        "ibhagwan/fzf-lua",
+      },
       config = function()
         require('borderline').setup({
         })
@@ -172,52 +199,27 @@ require("lazy").setup({
     },
 
     {
-      "nvim-telescope/telescope.nvim",
-      branch = "0.1.x",
-      dependencies = {"nvim-lua/plenary.nvim"},
+      "ibhagwan/fzf-lua",
+      dependencies = {
+        { "nvim-tree/nvim-web-devicons", opts = {} }
+      },
       config = function()
-        my_mappings = {
-          i = {
-            ["<C-h>"] = "select_vertical",
-            ["<C-v>"] = "select_horizontal"
-          },
-          n = {
-            ["<C-h>"] = "select_vertical",
-            ["<C-v>"] = "select_horizontal"
-          }
-        }
-        require('telescope').setup{
-          pickers = {
-            find_files = {
-              mappings = my_mappings
-            },
-            live_grep = {
-              mappings = my_mappings
-            },
-            current_buffer_fuzzy_find = {
-              mappings = my_mappings
+        require("fzf-lua").setup({
+          actions = {
+            files = {
+              ["default"] = require("fzf-lua.actions").file_edit_or_qf,
+              ["ctrl-h"]  = require("fzf-lua.actions").file_vsplit,
+              ["ctrl-v"]  = require("fzf-lua.actions").file_split,
+              ["ctrl-t"]  = require("fzf-lua.actions").file_tabedit,
+              ["alt-q"]   = require("fzf-lua.actions").file_sel_to_qf,
             }
           }
-        }
-        local builtin = require('telescope.builtin')
-        vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find files' })
-        vim.keymap.set('n', '<leader>fh', function()
-          builtin.find_files({ hidden = true })
-        end, { desc = 'Telescope find files (hidden included)' })
-        vim.keymap.set('n', '<leader>f/', builtin.current_buffer_fuzzy_find, { desc = 'Telescope fuzzy search current buffer' })
-        vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
-        vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
-      end
-    },
-
-    {
-      "numToStr/Comment.nvim",
-      config = function()
-        require('Comment').setup()
-        vim.keymap.set('n', '<leader>/', 'gcc' , { remap = true })
-        vim.keymap.set('n', '<leader>*', 'gbc' , { remap = true })
-        vim.keymap.set('v', '<leader>/', 'gc' , { remap = true })
-        vim.keymap.set('v', '<leader>*', 'gb' , { remap = true })
+        })
+        vim.keymap.set('n', '<leader>ff', "<cmd>FzfLua files<cr>", { desc = 'FzfLua find files' })
+        vim.keymap.set('n', '<leader>fh', "<cmd>FzfLua files hidden=true<cr>", { desc = 'FzfLua find files (hidden included)' })
+        vim.keymap.set('n', '<leader>f/', "<cmd>FzfLua blines<cr>", { desc = 'FzfLua fuzzy search current buffer lines' })
+        vim.keymap.set('n', '<leader>fg', "<cmd>FzfLua live_grep<cr>", { desc = 'FzfLua live grep' })
+        vim.keymap.set('n', '<leader>fb', "<cmd>FzfLua buffers<cr>", { desc = 'FzfLua buffers' })
       end
     },
 
@@ -236,17 +238,42 @@ require("lazy").setup({
     {
       "neovim/nvim-lspconfig",
       config = function()
+        local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
+        vim.lsp.config('solargraph', {
+          cmd = { "solargraph", "stdio" },
+          init_options = { formatting = true, diagnostics = true },
+          capabilities = capabilities,
+        })
+
+        vim.lsp.config('rubocop', {
+          cmd = { "bundle", "exec", "rubocop", "--lsp" },
+          capabilities = capabilities,
+        })
+
+        vim.lsp.config('cssls', {
+          capabilities = capabilities,
+        })
+
+        vim.lsp.config('marksman', {
+          capabilities = capabilities,
+        })
+
+        vim.lsp.config('pylsp', {
+          capabilities = capabilities,
+        })
 
         vim.lsp.enable('solargraph')
-        -- vim.lsp.enable('rubocop')
-        vim.lsp.enable('marksman')
+        vim.lsp.enable('rubocop')
+        -- vim.lsp.enable('marksman')
         vim.lsp.enable('cssls')
+        vim.lsp.enable('pylsp')
 
         vim.keymap.set('n', 'K', function()
           vim.lsp.buf.hover { border = 'single' }
         end)
 
-        vim.api.nvim_set_keymap('n', '<leader>dd', '<cmd>Telescope diagnostics<CR>', { noremap = true, silent = true })
+        vim.api.nvim_set_keymap('n', '<leader>dd', '<cmd>FzfLua diagnostics_document<CR>', { noremap = true, silent = true })
       end
     },
 
@@ -297,13 +324,6 @@ require("lazy").setup({
           }),
           matching = { disallow_symbol_nonprefix_matching = false }
         })
-
-        -- Set up lspconfig.
-        local capabilities = require('cmp_nvim_lsp').default_capabilities()
-        -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-        vim.lsp.config('solargraph', { capabilities = capabilities })
-        vim.lsp.config('rubocop', { capabilities = capabilities })
-        vim.lsp.config('cssls', { capabilities = capabilities })
       end
     },
 
@@ -391,6 +411,16 @@ require("lazy").setup({
           end
         }
       end
+    },
+
+    {
+      'rmagatti/auto-session',
+      lazy = false,
+      ---@module 'auto-session'
+      ---@type AutoSession.Config
+      opts = {
+        suppressed_dirs = {},
+      },
     },
 
   },
